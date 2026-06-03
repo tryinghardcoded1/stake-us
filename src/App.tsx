@@ -24,13 +24,13 @@ import {
 
 export default function App() {
   // Vault state & User values
-  const [balanceBTC, setBalanceBTC] = useState<number>(0.03500000);
+  const [balanceBTC, setBalanceBTC] = useState<number>(0.035);
   const [balanceUSDT, setBalanceUSDT] = useState<number>(2373.00);
   
   const [activeCurrency, setActiveCurrency] = useState<'BTC' | 'USDT'>('BTC');
   const [isVaultOpen, setIsVaultOpen] = useState<boolean>(true); // Open by default as requested!
   const [vaultTab, setVaultTab] = useState<'deposit' | 'withdraw'>('withdraw');
-  const [withdrawAmount, setWithdrawAmount] = useState<string>('0.03500000');
+  const [withdrawAmount, setWithdrawAmount] = useState<string>('0.035');
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export default function App() {
         return;
       }
       setBalanceBTC(prev => Number((prev - amt).toFixed(8)));
-      setNotification(`Successfully processed withdrawal of ${amt.toFixed(8)} BTC to wallet ${shortAddress}!`);
+      setNotification(`Successfully processed withdrawal of ${parseFloat(amt.toFixed(8))} BTC to wallet ${shortAddress}!`);
     } else {
       if (amt > balanceUSDT) {
         setNotification("Insufficient balance in your vault.");
@@ -103,7 +103,7 @@ export default function App() {
                 id="header-balance-dropdown-btn"
               >
                 <span className="font-semibold text-[15px]">
-                  {activeCurrency === 'BTC' ? balanceBTC.toFixed(8) : balanceUSDT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {activeCurrency === 'BTC' ? parseFloat(balanceBTC.toFixed(8)).toString() : balanceUSDT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
                 {activeCurrency === 'BTC' ? (
                   <div className="w-4 h-4 bg-[#F7931A] rounded-full flex items-center justify-center text-[9px] font-bold text-white shadow-xs">
@@ -135,7 +135,7 @@ export default function App() {
                   <button 
                     onClick={() => {
                       setActiveCurrency('BTC');
-                      setWithdrawAmount(balanceBTC.toPrecision(8));
+                      setWithdrawAmount(parseFloat(balanceBTC.toFixed(8)).toString());
                       setShowHeaderDropdown(false);
                     }}
                     className={`flex items-center justify-between w-full p-2 rounded-md text-left text-xs transition-colors hover:bg-[#304554] ${activeCurrency === 'BTC' ? 'bg-[#1c2831] text-white font-semibold' : 'text-[#B1B8BE]'}`}
@@ -144,7 +144,7 @@ export default function App() {
                       <div className="w-4 h-4 bg-[#F7931A] rounded-full flex items-center justify-center text-[9px] font-bold text-white">₿</div>
                       <span>Bitcoin (BTC)</span>
                     </div>
-                    <span>{balanceBTC.toFixed(8)}</span>
+                    <span>{parseFloat(balanceBTC.toFixed(8)).toString()}</span>
                   </button>
                   <button 
                     onClick={() => {
@@ -653,7 +653,7 @@ export default function App() {
                       </div>
                       <div className="text-right">
                         <p className="font-extrabold text-[15px] text-white tracking-wide">
-                          {activeCurrency === 'BTC' ? balanceBTC.toFixed(8) : balanceUSDT.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          {activeCurrency === 'BTC' ? parseFloat(balanceBTC.toFixed(8)).toString() : balanceUSDT.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </p>
                         <p className="text-[10px] font-bold text-[#8b9ba5] leading-normal mt-0.5">
                           {activeCurrency === 'BTC' ? `$${(balanceBTC * 67800).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD` : `$${balanceUSDT.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD`}
@@ -676,7 +676,7 @@ export default function App() {
                         value={withdrawAmount}
                         onChange={(e) => setWithdrawAmount(e.target.value)}
                         className="flex-1 bg-transparent border-none text-white text-sm font-bold py-3.5 px-4 outline-none placeholder-[#4a5c68]"
-                        placeholder="0.00000000"
+                        placeholder={activeCurrency === 'BTC' ? "0.00" : "0.00"}
                         required
                       />
                       <div className="flex items-center gap-2 pr-3.5 pl-2 z-10 select-none">
@@ -689,7 +689,7 @@ export default function App() {
                           type="button"
                           onClick={() => {
                             if (activeCurrency === 'BTC') {
-                              setWithdrawAmount(balanceBTC.toFixed(8));
+                              setWithdrawAmount(parseFloat(balanceBTC.toFixed(8)).toString());
                             } else {
                               setWithdrawAmount(balanceUSDT.toFixed(2));
                             }
